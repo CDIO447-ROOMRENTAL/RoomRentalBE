@@ -5,13 +5,14 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import com.example.room_rental.user.model.User;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-
+@Data
 public class UserPrinciple implements UserDetails {
     private static final long serialVersionUID = 1L;
 
@@ -26,10 +27,13 @@ public class UserPrinciple implements UserDetails {
     @JsonIgnore
     private String password;
 
+    private String avatar;
+
     private Collection<? extends GrantedAuthority> roles;
 
     public UserPrinciple(String id, String name,
                          String username, String email, String password,
+                         String avatar,
                          Collection<? extends GrantedAuthority> roles) {
         this.id = id;
         this.name = name;
@@ -37,6 +41,7 @@ public class UserPrinciple implements UserDetails {
         this.email = email;
         this.password = password;
         this.roles = roles;
+        this.avatar = avatar;
     }
 
 
@@ -51,6 +56,7 @@ public class UserPrinciple implements UserDetails {
                 user.getUsername(),
                 user.getEmail(),
                 user.getPassword(),
+                user.getAvatar(),
                 authorities
         );
     }

@@ -14,4 +14,5 @@ public interface AuthService {
     ResponseEntity<?> signIn(@Valid SignInForm signInForm);
 
     ResponseEntity<?> verify(String otp, HttpServletRequest request,HttpServletResponse response);
+
 }

@@ -2,6 +2,8 @@ package com.example.room_rental.user.service;
 
 import java.util.Optional;
 
+import com.example.room_rental.user.dto.reponse.UserResponse;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,7 +22,9 @@ public class UserServiceImp implements UserService {
         try {
             Optional<User> userOptional = userRepository.findById(id);
             if (userOptional.isPresent()) {
-                return new ResponseEntity<>(userOptional.get(), HttpStatus.OK);
+                UserResponse user = new UserResponse();
+                BeanUtils.copyProperties(userOptional.get(),user);
+                return new ResponseEntity<>(user, HttpStatus.OK);
             } else {
                 return new ResponseEntity<>("User not found", HttpStatus.NOT_FOUND);
             }

@@ -1,6 +1,5 @@
 package com.example.room_rental.auth.service.auth;
 
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
@@ -10,7 +9,6 @@ import com.example.room_rental.utils.cookie.service.CookieService;
 import com.example.room_rental.utils.email.service.EmailService;
 import com.example.room_rental.utils.otp.OTPGenerator;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.gson.Gson;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -35,12 +33,8 @@ import com.example.room_rental.auth.service.jwts.userdetail.UserPrinciple;
 import com.example.room_rental.user.model.User;
 import com.example.room_rental.user.repository.UserRepository;
 
-import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
 import java.util.HashSet;
 import java.util.Set;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Service
 public class AuthServiceImp implements AuthService{
@@ -71,7 +65,7 @@ public class AuthServiceImp implements AuthService{
             SecurityContextHolder.getContext().setAuthentication(authentication);
             String jwt = jwtProvider.generateJwtToken(authentication);
             UserPrinciple userDetails = (UserPrinciple) authentication.getPrincipal();
-            return ResponseEntity.ok(new JwtResponse(jwt, userDetails.getId(),userDetails.getName(),userDetails.getUsername(),userDetails.getEmail(),userDetails.getAuthorities()));
+            return ResponseEntity.ok(new JwtResponse(jwt, userDetails.getId(),userDetails.getName(),userDetails.getUsername(),userDetails.getEmail(),userDetails.getAvatar(),userDetails.getAuthorities()));
         } catch (UsernameNotFoundException | BadCredentialsException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid username or password");
         } catch (Exception e) {
@@ -88,7 +82,7 @@ public class AuthServiceImp implements AuthService{
             }
             User user= new User();
             BeanUtils.copyProperties(signUpForm,user);
-            user.setPassword(passwordEncoder.encode(user.getPassword()));
+            user.setPassword(passwordEncoder.encode(signUpForm.getPassword()));
             Set<Role> roleSet= new HashSet<>();
             Role userRole = roleRepository.findByRole(ERole.ROLE_USER)
                     .orElseThrow(() -> new RuntimeException("Fail! -> Cause: User Role not find."));
