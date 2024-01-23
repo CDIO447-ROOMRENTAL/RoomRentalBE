@@ -1,5 +1,8 @@
 package com.example.room_rental.user.model;
 
+import com.example.room_rental.company.model.Company;
+import com.example.room_rental.product.model.Product;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import org.hibernate.annotations.Parameter;
 import java.time.LocalDateTime;
 import java.util.HashSet;
@@ -22,8 +25,6 @@ public class User {
             strategy = "com.example.room_rental.utils.customid.PrefixedUuidGenerator",
             parameters = @Parameter(name = "prefix", value = "user-"))
     private String id;
-
-
     private String name;
 
     @Column(unique = true)
@@ -40,6 +41,10 @@ public class User {
     @Column(columnDefinition = "text")
     private String avatar;
 
+    @OneToMany(mappedBy = "id", cascade = CascadeType.ALL)
+    @JsonBackReference
+    private Set<Product> jobs = new HashSet<>();
+
     @ManyToMany
     @JoinTable(
             name = "user_role",
@@ -47,5 +52,14 @@ public class User {
             inverseJoinColumns = @JoinColumn(name = "role_id")
     )
     private Set<Role> roles = new HashSet<>();
+
+    @ManyToMany
+    @JoinTable(
+            name = "user_company",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "company_id")
+    )
+    private Set<Company> companies = new HashSet<>();
+
 }
 
