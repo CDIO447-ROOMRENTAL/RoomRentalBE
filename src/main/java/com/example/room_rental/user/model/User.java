@@ -1,33 +1,28 @@
 package com.example.room_rental.user.model;
 
-
+import org.hibernate.annotations.Parameter;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set; // Correct import for Set
+import javax.persistence.*;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.GenericGenerator;
-
-import com.example.room_rental.auth.model.Role;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-
+import org.hibernate.annotations.CreationTimestamp;
+import com.example.room_rental.auth.model.Role;
 import lombok.Data;
+import org.hibernate.annotations.GenericGenerator;
 
 @Data
 @Entity
 public class User {
     @Id
-    @GeneratedValue(generator = "uuid")
-    @GenericGenerator(name = "uuid", strategy = "uuid2")
+    @GeneratedValue(generator = "prefixed-uuid")
+    @GenericGenerator(
+            name = "prefixed-uuid",
+            strategy = "com.example.room_rental.utils.customid.PrefixedUuidGenerator",
+            parameters = @Parameter(name = "prefix", value = "user-"))
     private String id;
+
 
     private String name;
 
@@ -37,11 +32,14 @@ public class User {
     @Column(unique = true)
     private String email;
 
-
+    @JsonIgnore
     private String password;
 
     @CreationTimestamp
     private LocalDateTime createdAt;
+
+    @Column(columnDefinition = "text")
+    private String avatar;
 
     @ManyToMany
     @JoinTable(
