@@ -4,4 +4,6 @@ import org.springframework.http.ResponseEntity;
 
 public interface UserService {
     ResponseEntity<?> getById(String id);
+
+    ResponseEntity<?> getProfile();
 }

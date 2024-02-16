@@ -11,8 +11,8 @@ import javax.validation.Valid;
 public interface AuthService {
     ResponseEntity<?> signUp(@Valid SignUpForm signUpForm, HttpServletResponse response);
 
-    ResponseEntity<?> signIn(@Valid SignInForm signInForm);
+    ResponseEntity<?> signIn(@Valid SignInForm signInForm, HttpServletResponse response);
 
-    ResponseEntity<?> verify(String otp, HttpServletRequest request,HttpServletResponse response);
+    ResponseEntity<?> verify(String otp, HttpServletRequest request, HttpServletResponse response);
 
 }

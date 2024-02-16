@@ -56,18 +56,16 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http.cors().and().csrf().disable()
                 .authorizeRequests()
                 .antMatchers(HttpMethod.OPTIONS, "/**").permitAll() // Permit OPTIONS requests
+                .antMatchers("/auth/signUp").permitAll() // Allow access to authentication endpoints
                 .antMatchers("/auth/**").permitAll() // Allow access to authentication endpoints
-                .antMatchers("/email/**").permitAll() // Allow access to authentication endpoints
+                .antMatchers("/email/**").permitAll() // Allow access to email-related endpoints
                 .antMatchers("/cookie/**").permitAll() // Allow access to cookie-related endpoints
-                .antMatchers("/user/**").authenticated() // Require authentication for other user-related endpoints
-                .anyRequest().authenticated()
+                .antMatchers("/user/**").permitAll() // Allow access to user-related endpoints
+                .anyRequest().authenticated() // Require authentication for other endpoints
                 .and()
                 .exceptionHandling()
                 .authenticationEntryPoint(unauthorizedHandler)
                 .and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-
-        // Don't need to add the filter explicitly, it's added automatically by http.cors()
-        // http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
     }
 }

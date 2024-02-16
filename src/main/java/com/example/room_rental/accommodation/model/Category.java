@@ -1,4 +1,4 @@
-package com.example.room_rental.product.model;
+package com.example.room_rental.accommodation.model;
 
 import lombok.Data;
 

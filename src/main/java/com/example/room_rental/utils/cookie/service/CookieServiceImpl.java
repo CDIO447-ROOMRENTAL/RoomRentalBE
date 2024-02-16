@@ -37,7 +37,7 @@ public class CookieServiceImpl implements CookieService {
     @Override
     public ResponseEntity<?> setCookie(HttpServletResponse response, CookieRequest cookieRequest) {
         try {
-            if(cookieRequest.getExpried()==null){
+            if (cookieRequest.getExpried() == null) {
                 cookieRequest.setExpried(36000);
             }
             String encodedValue = URLEncoder.encode(cookieRequest.getValue(), StandardCharsets.UTF_8.toString());
@@ -59,7 +59,7 @@ public class CookieServiceImpl implements CookieService {
             String encodedValue = URLEncoder.encode("", StandardCharsets.UTF_8.toString());
             Cookie cookie = new Cookie(name, encodedValue);
             cookie.setPath("/");
-            cookie.setMaxAge(360000);
+            cookie.setMaxAge(0);
             response.addCookie(cookie);
             return new ResponseEntity<>("Cookie được xoá thành công!", HttpStatus.OK);
         } catch (Exception e) {

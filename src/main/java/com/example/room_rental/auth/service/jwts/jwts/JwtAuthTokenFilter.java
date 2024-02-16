@@ -44,19 +44,20 @@ public class JwtAuthTokenFilter extends OncePerRequestFilter {
     }
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+            throws ServletException, IOException {
         try {
-            String jwt = null;
-            Cookie[] cookies = request.getCookies();
-            if (cookies != null) {
-                for (Cookie cookie : cookies) {
-                    if ("accessToken".equals(cookie.getName())) {
-                        String decodedValue = URLDecoder.decode(cookie.getValue(), StandardCharsets.UTF_8.toString());
-                        jwt = decodedValue;
-                    }
-                }
-            }
+            String jwt = getJwt(request);
             if (jwt != null) {
+                // String jwtCookie = null;
+                // Cookie[] cookies = request.getCookies();
+                // if (cookies != null) {
+                // for (Cookie cookie : cookies) {
+                // if ("accessToken".equals(cookie.getName())) {
+                // jwtCookie = cookie.getValue();
+                // }
+                // }
+                // }
                 if (tokenProvider.validateJwtToken(jwt)) {
                     String username = tokenProvider.getUserNameFromJwtToken(jwt);
                     UserDetails userDetails = userDetailsService.loadUserByUsername(username);

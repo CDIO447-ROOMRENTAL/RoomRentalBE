@@ -37,7 +37,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Service
-public class AuthServiceImp implements AuthService{
+public class AuthServiceImp implements AuthService {
     @Autowired
     private UserRepository userRepository;
     @Autowired
@@ -54,18 +54,24 @@ public class AuthServiceImp implements AuthService{
     private OTPGenerator otpGenerator;
     @Autowired
     private CookieService cookieService;
-//    @Autowired
-//    private JwtAuthTokenFilter jwtAuthTokenFilter;
+
+    // @Autowired
+    // private JwtAuthTokenFilter jwtAuthTokenFilter;
     @Override
-    public ResponseEntity<?> signIn(@Valid SignInForm signInForm) {
+    public ResponseEntity<?> signIn(@Valid SignInForm signInForm, HttpServletResponse response) {
         try {
             Authentication authentication = authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(signInForm.getUsername(),signInForm.getPassword())
-            );
+                    new UsernamePasswordAuthenticationToken(signInForm.getUsername(), signInForm.getPassword()));
             SecurityContextHolder.getContext().setAuthentication(authentication);
             String jwt = jwtProvider.generateJwtToken(authentication);
             UserPrinciple userDetails = (UserPrinciple) authentication.getPrincipal();
-            return ResponseEntity.ok(new JwtResponse(jwt, userDetails.getId(),userDetails.getName(),userDetails.getUsername(),userDetails.getEmail(),userDetails.getAvatar(),userDetails.getAuthorities()));
+            CookieRequest cookieRequest = new CookieRequest();
+            cookieRequest.setName("accessToken");
+            cookieRequest.setValue(jwt);
+            cookieService.setCookie(response, cookieRequest);
+            return ResponseEntity
+                    .ok(new JwtResponse(jwt, userDetails.getId(), userDetails.getName(), userDetails.getUsername(),
+                            userDetails.getEmail(), userDetails.getAvatar(), userDetails.getAuthorities()));
         } catch (UsernameNotFoundException | BadCredentialsException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid username or password");
         } catch (Exception e) {
@@ -73,6 +79,7 @@ public class AuthServiceImp implements AuthService{
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Internal server error");
         }
     }
+
     @Override
     public ResponseEntity<?> signUp(@Valid SignUpForm signUpForm, HttpServletResponse response) {
         try {
@@ -80,24 +87,24 @@ public class AuthServiceImp implements AuthService{
                     userRepository.existsByUsername(signUpForm.getUsername())) {
                 return new ResponseEntity<>("Email or username already exists", HttpStatus.CONFLICT);
             }
-            User user= new User();
-            BeanUtils.copyProperties(signUpForm,user);
+            User user = new User();
+            BeanUtils.copyProperties(signUpForm, user);
             user.setPassword(passwordEncoder.encode(signUpForm.getPassword()));
-            Set<Role> roleSet= new HashSet<>();
+            Set<Role> roleSet = new HashSet<>();
             Role userRole = roleRepository.findByRole(ERole.ROLE_USER)
                     .orElseThrow(() -> new RuntimeException("Fail! -> Cause: User Role not find."));
             roleSet.add(userRole);
             user.setRoles(roleSet);
             String otp = otpGenerator.generateOTP();
-            CookieRequest cookieRequest= new CookieRequest();
+            CookieRequest cookieRequest = new CookieRequest();
             cookieRequest.setName(otp);
-            cookieRequest.setExpried(60*5);
+            cookieRequest.setExpried(60 * 5);
             ObjectMapper objectMapper = new ObjectMapper();
             cookieRequest.setValue(objectMapper.writeValueAsString(user));
-            cookieService.setCookie(response,cookieRequest);
+            cookieService.setCookie(response, cookieRequest);
 
             System.out.println(otp);
-            emailService.sendSimpleEmail(signUpForm.getEmail(), "",otp);
+            emailService.sendSimpleEmail(signUpForm.getEmail(), "", otp);
             return new ResponseEntity<>("Oke Oke", HttpStatus.OK);
         } catch (Exception e) {
             e.printStackTrace();
@@ -105,10 +112,8 @@ public class AuthServiceImp implements AuthService{
         }
     }
 
-
-
     @Override
-    public ResponseEntity<?> verify(String otp, HttpServletRequest request,HttpServletResponse response) {
+    public ResponseEntity<?> verify(String otp, HttpServletRequest request, HttpServletResponse response) {
         try {
             ResponseEntity<?> cookieResponse = cookieService.getCookie(request, otp);
 
@@ -119,10 +124,11 @@ public class AuthServiceImp implements AuthService{
                     ObjectMapper objectMapper = new ObjectMapper();
                     User user = objectMapper.readValue(jsonString, User.class);
                     userRepository.save(user);
-                    cookieService.clearCookie(response,otp);
+                    cookieService.clearCookie(response, otp);
                     return new ResponseEntity<>("Register user success", HttpStatus.OK);
                 } else {
-                    return new ResponseEntity<>("Invalid user representation in the cookie", HttpStatus.INTERNAL_SERVER_ERROR);
+                    return new ResponseEntity<>("Invalid user representation in the cookie",
+                            HttpStatus.INTERNAL_SERVER_ERROR);
                 }
 
             } else if (cookieResponse.getStatusCode() == HttpStatus.NOT_FOUND) {

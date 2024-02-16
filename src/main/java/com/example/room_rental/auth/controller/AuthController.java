@@ -18,17 +18,18 @@ public class AuthController {
     private AuthService authService;
 
     @PostMapping("/signIn")
-    public ResponseEntity<?> signIn(@Valid @RequestBody SignInForm signInForm) {
-        return authService.signIn(signInForm);
+    public ResponseEntity<?> signIn(@Valid @RequestBody SignInForm signInForm, HttpServletResponse response) {
+        return authService.signIn(signInForm, response);
     }
 
     @PostMapping("/signUp")
     public ResponseEntity<?> signUp(@Valid @RequestBody SignUpForm signUpForm, HttpServletResponse response) {
         return authService.signUp(signUpForm, response);
     }
+
     @GetMapping("/verify")
-    public ResponseEntity<?> verify(@RequestParam("otp") String otp, HttpServletRequest request,HttpServletResponse response) {
-        return authService.verify(otp, request,response);
+    public ResponseEntity<?> verify(@RequestParam("otp") String otp, HttpServletRequest request,
+            HttpServletResponse response) {
+        return authService.verify(otp, request, response);
     }
 }
-

@@ -5,7 +5,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-
 @RestController
 @CrossOrigin(origins = "/*")
 @RequestMapping("user")
@@ -14,8 +13,13 @@ public class UserController {
     private UserService userService;
 
     @GetMapping("getById")
-    public ResponseEntity<?> getById(@RequestParam ("id") String id ) {
+    public ResponseEntity<?> getById(@RequestParam("id") String id) {
         return userService.getById(id);
+    }
+
+    @GetMapping("getProfile")
+    public ResponseEntity<?> getProfile() {
+        return userService.getProfile();
     }
 
 }
