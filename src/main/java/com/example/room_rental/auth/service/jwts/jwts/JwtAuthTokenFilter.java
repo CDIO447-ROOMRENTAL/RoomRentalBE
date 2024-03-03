@@ -37,9 +37,11 @@ public class JwtAuthTokenFilter extends OncePerRequestFilter {
 
     private String getJwt(HttpServletRequest request) {
         String authHeader = request.getHeader("Authorization");
+
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             return authHeader.replace("Bearer ", "");
         }
+
         return null;
     }
 
@@ -47,32 +49,20 @@ public class JwtAuthTokenFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
         try {
+
             String jwt = getJwt(request);
-            if (jwt != null) {
-                // String jwtCookie = null;
-                // Cookie[] cookies = request.getCookies();
-                // if (cookies != null) {
-                // for (Cookie cookie : cookies) {
-                // if ("accessToken".equals(cookie.getName())) {
-                // jwtCookie = cookie.getValue();
-                // }
-                // }
-                // }
-                if (tokenProvider.validateJwtToken(jwt)) {
-                    String username = tokenProvider.getUserNameFromJwtToken(jwt);
-                    UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-                    UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
-                            userDetails, null, userDetails.getAuthorities());
-                    authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                    SecurityContextHolder.getContext().setAuthentication(authentication);
-                } else {
-                    logger.warn("Invalid JWT Token");
-                }
+            if (jwt != null && tokenProvider.validateJwtToken(jwt)) {
+                String username = tokenProvider.getUserNameFromJwtToken(jwt);
+
+                UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+                UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
+                        userDetails, null, userDetails.getAuthorities());
+                authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+
+                SecurityContextHolder.getContext().setAuthentication(authentication);
             }
         } catch (Exception e) {
-            logger.error("Error during JWT processing -> Message: {}", e.getMessage());
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            return;
+            logger.error("Can NOT set user authentication -> Message: {}", e);
         }
         filterChain.doFilter(request, response);
     }

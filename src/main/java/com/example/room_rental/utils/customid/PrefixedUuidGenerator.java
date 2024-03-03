@@ -1,44 +1,26 @@
 package com.example.room_rental.utils.customid;
 
-import org.hibernate.MappingException;
-import org.hibernate.annotations.Parameter;
-import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.HibernateException;
 import org.hibernate.engine.spi.SharedSessionContractImplementor;
 import org.hibernate.id.UUIDGenerator;
-import org.hibernate.type.Type;
 import org.hibernate.service.ServiceRegistry;
+import org.hibernate.type.Type;
 
 import java.io.Serializable;
 import java.util.Properties;
 
 public class PrefixedUuidGenerator extends UUIDGenerator {
 
-    private static String prefix;
-
-    public static String getPrefix() {
-        return prefix;
-    }
-
-    public static void setPrefixFromParameters(String prefixValue) {
-        prefix = prefixValue;
-    }
+    private String prefix;
 
     @Override
-    public Serializable generate(SharedSessionContractImplementor session, Object obj) {
-        if (prefix != null) {
-            // Manually prepend the prefix to the generated UUID
-            return prefix + super.generate(session, obj);
-        }
-
-        return super.generate(session, obj);
-    }
-
-    @Override
-    public void configure(Type type, Properties params, ServiceRegistry serviceRegistry) throws MappingException {
+    public void configure(Type type, Properties params, ServiceRegistry serviceRegistry) {
         super.configure(type, params, serviceRegistry);
-        String prefixValue = params.getProperty("prefix");
-        if (prefixValue != null) {
-            setPrefixFromParameters(prefixValue);
-        }
+        this.prefix = params.getProperty("prefix");
+    }
+
+    @Override
+    public Serializable generate(SharedSessionContractImplementor session, Object object) throws HibernateException {
+        return prefix + super.generate(session, object);
     }
 }

@@ -14,16 +14,12 @@ import javax.persistence.Id;
 
 @Entity
 @Data
-@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id", scope = Long.class)
 public class Image {
 
     @Id
     @GeneratedValue(generator = "prefixed-uuid")
     @GenericGenerator(name = "prefixed-uuid", strategy = "com.example.room_rental.utils.customid.PrefixedUuidGenerator", parameters = @Parameter(name = "prefix", value = "image-"))
     private String id;
-
-    @Column(columnDefinition = "text")
-    private String name;
 
     @Column(columnDefinition = "text")
     private String url;

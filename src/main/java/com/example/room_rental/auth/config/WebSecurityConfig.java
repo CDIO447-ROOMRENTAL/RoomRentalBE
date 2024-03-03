@@ -16,6 +16,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
@@ -56,16 +57,19 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http.cors().and().csrf().disable()
                 .authorizeRequests()
                 .antMatchers(HttpMethod.OPTIONS, "/**").permitAll() // Permit OPTIONS requests
-                .antMatchers("/auth/signUp").permitAll() // Allow access to authentication endpoints
                 .antMatchers("/auth/**").permitAll() // Allow access to authentication endpoints
                 .antMatchers("/email/**").permitAll() // Allow access to email-related endpoints
                 .antMatchers("/cookie/**").permitAll() // Allow access to cookie-related endpoints
+                .antMatchers("/accommodation/public/get").permitAll() // Allow access to cookie-related endpoints
+                .antMatchers("/user/getProfile", "/user/updateProfile", "/user/uploadImage").authenticated()
                 .antMatchers("/user/**").permitAll() // Allow access to user-related endpoints
+                .antMatchers("/accommodation/create","accommodation/room").hasAnyAuthority("ROLE_ADMIN", "ROLE_PM")
+                .antMatchers("/accommodation/**").permitAll() // Allow access to user-related endpoints
                 .anyRequest().authenticated() // Require authentication for other endpoints
                 .and()
                 .exceptionHandling()
-                .authenticationEntryPoint(unauthorizedHandler)
-                .and()
+                .authenticationEntryPoint(unauthorizedHandler).and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+        http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
     }
 }

@@ -1,16 +1,20 @@
 package com.example.room_rental.user.model;
 
 import com.example.room_rental.company.model.Company;
+import com.example.room_rental.user.constain.EGender;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 
 import org.hibernate.annotations.Parameter;
+
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set; // Correct import for Set
 import javax.persistence.*;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import org.hibernate.annotations.CreationTimestamp;
@@ -22,13 +26,19 @@ import org.hibernate.annotations.GenericGenerator;
 
 @Data
 @Entity
-@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
+//@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id", scope = Long.class)
 public class User {
         @Id
         @GeneratedValue(generator = "prefixed-uuid")
         @GenericGenerator(name = "prefixed-uuid", strategy = "com.example.room_rental.utils.customid.PrefixedUuidGenerator", parameters = @Parameter(name = "prefix", value = "user-"))
         private String id;
+
         private String name;
+        @Enumerated(EnumType.STRING)
+        private EGender gender;
+        private LocalDate dob;
+        private String phone;
+        private String address;
 
         @Column(unique = true)
         private String username;
@@ -45,6 +55,7 @@ public class User {
         private String avatar;
 
         @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+        @JsonManagedReference
         private Set<Accommodation> accommodations = new HashSet<>();
 
         @ManyToMany

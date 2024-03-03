@@ -18,7 +18,7 @@ import javax.persistence.Id;
 public class Company {
     @Id
     @GeneratedValue(generator = "prefixed-uuid")
-    @GenericGenerator(name = "prefixed-uuid", strategy = "com.example.room_rental.utils.customid.PrefixedUuidGenerator", parameters = @Parameter(name = "prefix", value = "company-"))
+    @GenericGenerator(name = "prefixed-uuid", strategy = "com.example.room_rental.utils.customid.PrefixedUuidGenerator", parameters = @Parameter(name = "prefix", value = "category-"))
     private String id;
     @Column(columnDefinition = "text")
     private String name;

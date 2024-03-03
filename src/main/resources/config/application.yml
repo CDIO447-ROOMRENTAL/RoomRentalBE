@@ -4,3 +4,7 @@ spring:
       - db
       - server
       - email
+  output:
+    ansi:
+      enabled: always
+      

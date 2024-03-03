@@ -2,18 +2,15 @@ package com.example.room_rental.auth.service.jwts.jwts;
 
 import com.example.room_rental.auth.service.jwts.userdetail.UserPrinciple;
 import io.jsonwebtoken.*;
-import io.jsonwebtoken.security.Keys;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
-import javax.crypto.SecretKey;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
-
 
 @Component
 public class JwtProvider {
@@ -28,13 +25,14 @@ public class JwtProvider {
         UserPrinciple userPrincipal = (UserPrinciple) authentication.getPrincipal();
 
         return Jwts.builder()
-                .setSubject((userPrincipal.getUsername()))
+                .setSubject(userPrincipal.getUsername())
                 .setIssuedAt(new Date())
-                .setExpiration(new Date((new Date()).getTime() + TimeUnit.DAYS.toMillis(30)))
+                .setExpiration(new Date(System.currentTimeMillis() + TimeUnit.DAYS.toMillis(30)))
                 .signWith(SignatureAlgorithm.HS512, jwtSecretKey)
                 .compact();
 
     }
+
     public boolean validateJwtToken(String authToken) {
         try {
             Jwts.parser().setSigningKey(jwtSecretKey).parseClaimsJws(authToken);
@@ -51,21 +49,20 @@ public class JwtProvider {
 
         return false;
     }
-    public String getUserNameFromJwtToken(String token) {
 
-        String userName = Jwts.parser()
+    public String getUserNameFromJwtToken(String token) {
+        return Jwts.parser()
                 .setSigningKey(jwtSecretKey)
                 .parseClaimsJws(token)
-                .getBody().getSubject();
-        return userName;
+                .getBody()
+                .getSubject();
     }
-
 
     public String resolveToken(HttpServletRequest request) {
         String bearerToken = request.getHeader(HEADER_STRING);
         if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(TOKEN_PREFIX)) {
             return bearerToken.substring(TOKEN_PREFIX.length());
         }
-        return null;
+        return "";
     }
 }
