@@ -2,8 +2,9 @@ package com.example.room_rental.accommodation.model;
 
 import com.example.room_rental.image.model.Image;
 import com.example.room_rental.user.model.User;
-import com.fasterxml.jackson.annotation.*;
-
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIdentityReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.GenericGenerator;
@@ -13,7 +14,6 @@ import org.springframework.data.geo.Point;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.HashSet;
-import java.util.Objects;
 import java.util.Set;
 
 @Entity
@@ -53,4 +53,5 @@ public class Accommodation {
         @OneToMany(mappedBy = "accommodation", cascade = CascadeType.ALL)
         @JsonIgnore
         private Set<Room> rooms = new HashSet<>();
+
 }

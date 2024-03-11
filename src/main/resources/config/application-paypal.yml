@@ -1,0 +1,5 @@
+paypal:
+  client:
+    id: AXK52v2_mlvCaKzY0Ko55VDjxR7nFhBAqKSLQWSJKxz11OsZ_UdGk7ru3oP4vnpJ_XIsxtW27tu3oVpy
+    secret: EFV6llHlTAzzj_pJ_xA2RSmlmLSNVaSqf9yrvUfc26SHNau92AujzDB2pPN8diYgshdNK70lMrlLQh3s
+  mode: sandbox

@@ -7,6 +7,7 @@ import java.util.Set;
 
 import javax.transaction.Transactional;
 
+import com.example.room_rental.accommodation.model.Room;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
@@ -247,6 +248,16 @@ public class AccommodationServiceImp implements AccommodationService {
             return new ResponseEntity<>(accommodations, HttpStatus.OK);
         }catch (Exception e){
             return new ResponseEntity<>("INTERNAL_SERVER_ERROR", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @Override
+    public ResponseEntity<?> getPublicAccommodationById(String accommodationId) {
+        try {
+            Optional<Accommodation> optionalAccommodation = accommodationRepository.findById(accommodationId);
+            return new ResponseEntity<>(optionalAccommodation.get(),HttpStatus.OK);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to get price min max: " + e.getMessage());
         }
     }
 

@@ -20,9 +20,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
+import java.math.BigDecimal;
+import java.util.*;
 
 @Service
 public class RoomServiceImpl implements RoomService {
@@ -144,4 +143,39 @@ public class RoomServiceImpl implements RoomService {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to update room: " + e.getMessage());
         }
     }
+
+    @Override
+    public ResponseEntity<?> getRoomsByAccommodationId(String accommodationId) {
+        try {
+            List<Room> rooms =roomRepository.getRoomsByAccommodationId(accommodationId);
+            return ResponseEntity.ok(rooms);
+        }catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to update room: " + e.getMessage());
+        }
+    }
+
+    public ResponseEntity<?> getPriceMinMaxRoomsByAccommodationId(String accommodationId) {
+        try {
+            List<Object[]> result = roomRepository.getPriceMinMaxRoomsByAccommodationId(accommodationId);
+
+            if (result != null && !result.isEmpty()) {
+                Object[] prices = result.get(0);
+                BigDecimal minPrice = (BigDecimal) prices[0];
+                BigDecimal maxPrice = (BigDecimal) prices[1];
+
+                Map<String, BigDecimal> priceRange = new HashMap<>();
+                priceRange.put("minPrice", minPrice);
+                priceRange.put("maxPrice", maxPrice);
+
+                return ResponseEntity.ok(priceRange);
+            } else {
+                return ResponseEntity.notFound().build();
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to get price min max: " + e.getMessage());
+        }
+    }
+
+
+
 }

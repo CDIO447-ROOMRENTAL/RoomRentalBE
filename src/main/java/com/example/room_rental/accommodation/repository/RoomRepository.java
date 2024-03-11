@@ -8,6 +8,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public interface RoomRepository extends JpaRepository<Room,String> {
         @Query(value = "SELECT * FROM room r " +
@@ -17,7 +19,7 @@ public interface RoomRepository extends JpaRepository<Room,String> {
                 "AND (:userId IS NULL OR a.user_id = :userId)",
                 countQuery = "SELECT COUNT(*) FROM room r " +
                         "JOIN accommodation a ON r.accommodation_id = a.id " +
-                        "WHERE (:search IS NULL OR r.number_room = :search OR r.floor = :search OR r.price = :search OR r.description LIKE %:search%) " +
+                        "WHERE ( r.number_room = :search OR r.floor = :search OR r.price = :search OR r.description LIKE %:search%) " +
                         "AND (:accommodationId IS NULL OR r.accommodation_id = :accommodationId) " +
                         "AND (:userId IS NULL OR a.user_id = :userId)",
                 nativeQuery = true)
@@ -35,4 +37,22 @@ public interface RoomRepository extends JpaRepository<Room,String> {
     Room getRoomById(@Param("accommodationId") String accommodationId,
                      @Param("roomId") String roomId,
                      @Param("userId") String userId);
+
+    @Query(
+            value = "SELECT * FROM room r WHERE " +
+                    "(:accommodationId IS NULL OR r.accommodation_id = :accommodationId) " +
+                    "ORDER BY r.floor, r.number_room",
+            nativeQuery = true
+    )
+    List<Room> getRoomsByAccommodationId(@Param("accommodationId") String accommodationId);
+
+
+    @Query(
+            value = "SELECT MIN(r.price), MAX(r.price) FROM room r WHERE " +
+                    "(:accommodationId IS NULL OR r.accommodation_id = :accommodationId)",
+            nativeQuery = true
+    )
+    List<Object[]> getPriceMinMaxRoomsByAccommodationId(@Param("accommodationId") String accommodationId);
+
+
 }

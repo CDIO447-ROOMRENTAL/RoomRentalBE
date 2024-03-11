@@ -63,6 +63,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/accommodation/public/get").permitAll() // Allow access to cookie-related endpoints
                 .antMatchers("/user/getProfile", "/user/updateProfile", "/user/uploadImage").authenticated()
                 .antMatchers("/user/**").permitAll() // Allow access to user-related endpoints
+                .antMatchers("/accommodation/room/public/**").permitAll()
                 .antMatchers("/accommodation/create","accommodation/room").hasAnyAuthority("ROLE_ADMIN", "ROLE_PM")
                 .antMatchers("/accommodation/**").permitAll() // Allow access to user-related endpoints
                 .anyRequest().authenticated() // Require authentication for other endpoints

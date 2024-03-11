@@ -1,5 +1,6 @@
 package com.example.room_rental.accommodation.model;
 
+import com.example.room_rental.contract.model.Contract;
 import com.example.room_rental.image.model.Image;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIdentityReference;
@@ -37,4 +38,7 @@ public class Room {
     @JsonManagedReference
     private Set<Image> images = new HashSet<>();
 
+    @OneToMany(mappedBy = "room", cascade = CascadeType.ALL)
+    @JsonIgnore
+    private Set<Contract> contracts = new HashSet<>();
 }

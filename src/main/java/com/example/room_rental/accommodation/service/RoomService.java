@@ -12,4 +12,8 @@ public interface RoomService {
     ResponseEntity<?> getRoomById(String accommodationId, String roomId);
 
     ResponseEntity<?> updateRoom(String roomId, RoomRequest roomRequest);
+
+    ResponseEntity<?> getRoomsByAccommodationId(String accommodationId);
+
+    ResponseEntity<?> getPriceMinMaxRoomsByAccommodationId(String accommodationId);
 }

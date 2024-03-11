@@ -29,7 +29,6 @@ public class AccommodationController {
     public ResponseEntity<?> createAccommodation(@RequestBody CreateAccommodationRequest accommodationRequest) {
         return accommodationService.createAccommodation(accommodationRequest);
     }
-
     @GetMapping("/get")
     public ResponseEntity<?> getProducts(@PageableDefault(10) Pageable pageable,
             @RequestParam(required = false) Integer page,
@@ -42,17 +41,7 @@ public class AccommodationController {
         return accommodationService.getProductById(id);
     }
 
-    @GetMapping("public/get")
-    public ResponseEntity<?> getProductsPublic(@PageableDefault(10) Pageable pageable,
-                                         @RequestParam(required = false) Integer page,
-                                         @RequestParam(required = false) String search,
-                                         @RequestParam(required = false) String address,
-                                         @RequestParam(required = false) String sortDate,
-                                         @RequestParam(required = false) Integer category
-    ) {
-        System.out.println(page+" "+search+" "+address+" "+sortDate+" "+category);
-        return accommodationService.getProductsPublic(pageable,page,search,address,sortDate,category);
-    }
+
     @PutMapping("/update")
     public ResponseEntity<?> updateAccommodation(@RequestParam(required = true) String id ,@RequestBody CreateAccommodationRequest accommodationRequest) {
         return accommodationService.updateAccommodation(id,accommodationRequest);
@@ -61,6 +50,23 @@ public class AccommodationController {
     @GetMapping("/categories")
     public ResponseEntity<?> getCategories() {
         return categoryService.getCategories();
+    }
+
+
+    @GetMapping("public/get")
+    public ResponseEntity<?> getProductsPublic(@PageableDefault(10) Pageable pageable,
+                                               @RequestParam(required = false) Integer page,
+                                               @RequestParam(required = false) String search,
+                                               @RequestParam(required = false) String address,
+                                               @RequestParam(required = false) String sortDate,
+                                               @RequestParam(required = false) Integer category
+    ) {
+        return accommodationService.getProductsPublic(pageable,page,search,address,sortDate,category);
+    }
+
+    @GetMapping("public/getPublicAccommodationById")
+    public ResponseEntity<?> getPublicAccommodationById(@RequestParam(required = true) String accommodationId){
+        return accommodationService.getPublicAccommodationById(accommodationId);
     }
 
 }

@@ -17,4 +17,7 @@ public interface AccommodationService {
 
 
     ResponseEntity<?> getProductsPublic(Pageable pageable, Integer page, String search, String address, String sortDate, Integer category);
+
+    ResponseEntity<?> getPublicAccommodationById(String accommodationId);
+
 }

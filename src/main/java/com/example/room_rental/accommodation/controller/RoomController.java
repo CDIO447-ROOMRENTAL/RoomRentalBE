@@ -2,7 +2,6 @@ package com.example.room_rental.accommodation.controller;
 
 import com.example.room_rental.accommodation.dto.request.RoomRequest;
 import com.example.room_rental.accommodation.service.RoomService;
-import net.bytebuddy.implementation.bind.annotation.Default;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -32,5 +31,19 @@ public class RoomController {
     public ResponseEntity<?> updateRoom(@RequestParam(required = true) String roomId,@RequestBody RoomRequest roomRequest){
         return roomService.updateRoom(roomId,roomRequest);
     }
+    @GetMapping("public/getRoomsByAccommodationId")
+    public ResponseEntity<?> getRoomsByAccommodationId(@RequestParam(required = true) String accommodationId){
+        return roomService.getRoomsByAccommodationId(accommodationId);
+    }
+    @GetMapping("public/getPriceMinMaxRoomsByAccommodationId")
+    public ResponseEntity<?> getPriceMinMaxRoomsByAccommodationId(@RequestParam(required = true) String accommodationId){
+        return roomService.getPriceMinMaxRoomsByAccommodationId(accommodationId);
+    }
+    @PostMapping("createRoomContract")
+    public ResponseEntity<?> createRoomContract(){
+        return null;
+    }
+
+
 
 }
